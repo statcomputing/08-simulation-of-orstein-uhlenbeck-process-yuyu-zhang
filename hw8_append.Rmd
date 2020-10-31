@@ -1,0 +1,82 @@
+---
+title: "<center> Assignment 8 <center>"
+author: "<center> YUYU ZHANHG <center>"
+date: "<center> 10/30/2020 <center>"
+output:
+  pdf_document: 
+    fig_height: 4.25
+    fig_width: 5
+    latex_engine: xelatex
+  html_document:
+    df_print: paged
+---
+
+#### (1) Non-Homogeneous poisson process parameter
+\[N(t) - Poisson(\lambda t)\], 
+\[Pr(N(t) = k) = e^ {− \lambda t} \frac{(\lambda t^k)}{k!} \]
+They constitute a Poisson process with rate $\lambda$(t) > 0 
+Mean Value is theoretically equal to:\\
+\[\int_{0}^{5} \lambda(t)dt\]
+which is equal to:\\
+
+\begin{align*}
+&=\frac{2}{3}t^{3/2}+\int_{0}^{5} \sqrt t +e^{-t}sin(2\pi t) dt \\
+&=\frac{2}{3}t^{3/2}+\frac{1}{2\pi}e^{-t}-cos(2\pi t)-\int_{0}^{5} \sqrt t +e^{-t}-cos(2\pi t)dt \\
+&=\frac{2}{3}t^{3/2}+ \frac{1}{2\pi}e^{-t}(cos(2\pi t)+sin(2\pi t))-\int_{0}^{5}e^{-t}sin(2\pi t) dt
+\end{align*}
+Then :\\
+\[\int_{0}^{5} \lambda(t)dt =\frac{2}{3}t^{3/2} - \frac{1}{4\pi}(cos(2\pi t)+sin(2\pi t))|_0^5 \]=7.4536\\
+the parameter is 7.4536
+
+
+
+
+
+#### (2)function\
+\
+1.Let t= 0 , I = 0 \
+2.generate the random data $\mathit(U)$ \
+3.t=t-log U/ $\lambda$ if t>T break. \
+4.if U $\leq\lambda(t)/\lambda$ let I=I+1, S(I)=t; \
+5.or go back to step 2. \
+
+$\lambda(t) \leq \lambda = 1$
+
+
+#### simulation 
+
+```{R}
+N<-0
+for(i in 1:1000){
+t<-0
+I<-0
+while(t<=5){
+    u<-runif(1)
+    t<-t-log(u)
+    if(t<=5){
+    u1<-runif(1)
+    if(u1<=(t^.5 +exp(-t)*sin(2* pi* t))) I<-I+1            
+     }
+     }
+N[i]<-I
+}
+plot(N,type = "o", col = "pink")
+hist(N)
+mean(N)
+plot(density(N),col = "grey")
+
+#kernel estimate
+Y<-0
+for (i in 1:1000){
+N<-rpois(1,7.4536)
+X<-rexp(N,1)
+Y[i]<-sum(X)
+}
+mean(Y)
+sp=spline(Y,n=1000)
+plot(density(Y))
+
+
+
+```
+comparing the real simulation data of possion process and the kernel density above, we could see that the mean value of the times that events happened is around 4.749 
